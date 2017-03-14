@@ -1,0 +1,24 @@
+{
+    "name": "skydiablo/swiftmailer-extension-bundle",
+    "type": "symfony-bundle",
+    "require": {
+        "symfony/swiftmailer-bundle": "^2.5"
+    },
+    "authors": [
+        {
+            "name": "Volker von Hoesslin",
+            "email": "skydiablo@gmx.net"
+        }
+    ],
+    "keywords": [
+        "swiftmailer"
+    ],
+    "autoload": {
+        "psr-4": {
+            "SkyDiablo\\SwiftmailerExtensionBundle\\": ""
+        }
+    },
+    "license": [
+        "MIT"
+    ]
+}
