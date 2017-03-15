@@ -2,7 +2,9 @@
     "name": "skydiablo/swiftmailer-extension-bundle",
     "type": "symfony-bundle",
     "require": {
-        "symfony/swiftmailer-bundle": "^2.5"
+        "symfony/swiftmailer-bundle": "^2.5",
+        "tijsverkoyen/css-to-inline-styles": "^2.2",
+        "aws/aws-sdk-php": "^3.19"
     },
     "authors": [
         {

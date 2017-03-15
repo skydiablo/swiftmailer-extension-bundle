@@ -1,1 +1,32 @@
 services:
+    skydiablo.swiftmailer-extension.css2inline-styles:
+        class: SkyDiablo\SwiftmailerExtensionBundle\Service\CssToInlineStylesService
+
+    skydiablo.swiftmailer-extension.plugin.css2inline:
+        class: SkyDiablo\SwiftmailerExtensionBundle\Plugin\CSS2Inline\CSS2InlinePlugin
+        arguments:
+            - '@skydiablo.swiftmailer-extension.css2inline-styles'
+        tags:
+            swiftmailer_plugin: # register as swiftmailer plugin
+                name: swiftmailer.default.plugin
+
+    skydiablo.swiftmailer-extension.plugin.embedded-media:
+        class: SkyDiablo\SwiftmailerExtensionBundle\Plugin\EmbeddedMedia\EmbeddedMediaPlugin
+        arguments:
+            - '%skydiablo.swiftmailer-extension.plugin.embedded-media.embed-attribute-name%'
+            - '%skydiablo.swiftmailer-extension.plugin.embedded-media.default%'
+        tags:
+            swiftmailer_plugin: # register as swiftmailer plugin
+                name: swiftmailer.default.plugin
+
+    skydiablo.swiftmailer-extension.abstract-default-mailer:
+        class: SkyDiablo\SwiftmailerExtensionBundle\Service\DefaultMailerService
+        calls:
+            - [setMailer, ['@mailer']]
+            - [setTwig, ['@twig']]
+            - [setTranslator, ['@translator']]
+            - [setValidator, ['@validator']]
+            - [setFileLocator, ['@file_locator']]
+            - [setSenderEmailAddress, ['%skydiablo.swiftmailer-extension.email_sender_address%']]
+            - [setSenderEmailName, ['%skydiablo.swiftmailer-extension.email_sender_name%']]
+        abstract: true

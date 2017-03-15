@@ -2,6 +2,7 @@
 
 namespace SkyDiablo\SwiftmailerExtensionBundle\DependencyInjection;
 
+use SkyDiablo\SwiftmailerExtensionBundle\Spool\AWSSQSSpoolManager;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -18,11 +19,47 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('sky_diablo_swiftmailer_extension');
+        $rootNode = $treeBuilder->root(SkyDiabloSwiftmailerExtensionExtension::ALIAS);
 
-        // Here you should define the parameters that are allowed to
-        // configure your bundle. See the documentation linked above for
-        // more information on that topic.
+        $rootNode->children()
+            ->scalarNode('email_sender_address')->cannotBeEmpty()->end()
+            ->scalarNode('email_sender_name')->defaultNull()->end()
+            ->arrayNode('spool')
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->arrayNode('awssqs')
+                        ->addDefaultsIfNotSet()
+                        ->children()
+                            ->arrayNode('queue')
+                                ->addDefaultsIfNotSet()
+                                ->children()
+                                    ->scalarNode('url')->end()
+                                    ->integerNode('max_message_size')->defaultValue(256)->end()
+                                    ->integerNode('long_polling_timeout')->defaultValue(AWSSQSSpoolManager::DEFAULT_AWS_SQS_LONG_POLLING_TIMEOUT)->end()
+                                ->end()
+                            ->end()
+                            ->scalarNode('client_id')->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end()
+            ->arrayNode('plugin')
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->arrayNode('embedded_media')
+                        ->addDefaultsIfNotSet()
+                        ->canBeDisabled()
+                        ->children()
+                            ->scalarNode('embed_attribute_name')->defaultValue('embed')->end()
+                            ->booleanNode('default')->defaultFalse()->end()
+                        ->end()
+                    ->end()
+                    ->arrayNode('css2inline')
+                        ->addDefaultsIfNotSet()
+                        ->canBeDisabled()
+                    ->end()
+                ->end()
+            ->end();
 
         return $treeBuilder;
     }
