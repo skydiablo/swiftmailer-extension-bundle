@@ -77,4 +77,20 @@ class EmailReturnStatus
         return $this->recipients;
     }
 
+    /**
+     * @return string
+     */
+    public function getStatus(): string
+    {
+        return $this->status;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getTimestamp(): \DateTime
+    {
+        return $this->timestamp;
+    }
+
 }
