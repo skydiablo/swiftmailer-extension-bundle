@@ -29,8 +29,9 @@ class SkyDiabloSwiftmailerExtensionExtension extends Extension
         $config = $this->processConfiguration($configuration, $configs);
 
         $this->handleDefault($config, $container);
-        $this->handleSpool($config['spool'], $container);
-        $this->handlePlugin($config['plugin'], $container);
+        $this->handleSpool($config['spool'] ?? [], $container);
+        $this->handlePlugin($config['plugin'] ?? [], $container);
+        $this->handleHandler($config['handler'] ?? [], $container);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yml');
@@ -40,7 +41,28 @@ class SkyDiabloSwiftmailerExtensionExtension extends Extension
     {
         $container->getParameterBag()->set('skydiablo.swiftmailer-extension.email_sender_address', $pluginConfig['email_sender_address']);
         $container->getParameterBag()->set('skydiablo.swiftmailer-extension.email_sender_name', $pluginConfig['email_sender_name']);
+    }
 
+    protected function handleHandler(array $handlerConfigs, ContainerBuilder $container)
+    {
+        foreach ($handlerConfigs AS $key => $handlerConfig) {
+            switch ($key) {
+                case 'email_return_status':
+                    foreach ($handlerConfig AS $handler => $settings) {
+                        switch ($handler) {
+                            case 'aws_ses':
+                                $container
+                                    ->getParameterBag()
+                                    ->set('skydiablo.swiftmailer-extension.handler.email_return_status.aws_ses.queue_url', $settings['queue']['url']);
+                                $container
+                                    ->getParameterBag()
+                                    ->set('skydiablo.swiftmailer-extension.handler.email_return_status.aws_ses.long_polling_timeout', $settings['queue']['long_polling_timeout']);
+                                break;
+                        }
+                    }
+                    break;
+            }
+        }
     }
 
     protected function handleSpool(array $spoolConfigs, ContainerBuilder $container)

@@ -30,3 +30,12 @@ services:
             - [setSenderEmailAddress, ['%skydiablo.swiftmailer-extension.email_sender_address%']]
             - [setSenderEmailName, ['%skydiablo.swiftmailer-extension.email_sender_name%']]
         abstract: true
+
+    sky_diablo_swiftmailer_extension.handler_aws.email_return_status_handler:
+        class: SkyDiablo\SwiftmailerExtensionBundle\Handler\aws\EmailReturnStatusHandler
+        arguments:
+            - '@aws.sqs'
+            - '%skydiablo.swiftmailer-extension.handler.email_return_status.aws_ses.queue_url%'
+            - '%skydiablo.swiftmailer-extension.handler.email_return_status.aws_ses.long_polling_timeout%'
+            - '@event_dispatcher'
+            - '@logger'

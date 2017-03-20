@@ -2,6 +2,7 @@
 
 namespace SkyDiablo\SwiftmailerExtensionBundle\DependencyInjection;
 
+use SkyDiablo\SwiftmailerExtensionBundle\Handler\aws\EmailReturnStatusHandler;
 use SkyDiablo\SwiftmailerExtensionBundle\Spool\AWSSQSSpoolManager;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -59,7 +60,30 @@ class Configuration implements ConfigurationInterface
                         ->canBeDisabled()
                     ->end()
                 ->end()
-            ->end();
+            ->end()
+            ->arrayNode('handler')
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->arrayNode('email_return_status')
+                        ->addDefaultsIfNotSet()
+                        ->children()
+                            ->arrayNode('aws_ses')
+                                ->addDefaultsIfNotSet()
+                                ->children()
+                                    ->arrayNode('queue')
+                                        ->addDefaultsIfNotSet()
+                                        ->children()
+                                            ->scalarNode('url')->cannotBeEmpty()->defaultValue('')->end()
+                                           ->integerNode('long_polling_timeout')->defaultValue(EmailReturnStatusHandler::DEFAULT_AWS_SQS_LONG_POLLING_TIMEOUT)->end()
+                                        ->end()
+                                    ->end()
+                                ->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end()
+        ;
 
         return $treeBuilder;
     }
